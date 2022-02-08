@@ -16,4 +16,3 @@ You do not need to provide a sketch or representation of the design, you only ne
 1.	How well does the visualisation you created meet with the design choices you made?
 2.	What are the strengths and weaknesses of the design with respect to the target audience and the question you were intending to answer?
 3.	If relevant, suggest any ways in which your visualisation design could be improved.
-
