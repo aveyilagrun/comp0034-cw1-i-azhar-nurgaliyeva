@@ -25,6 +25,12 @@ bar_fig = px.bar(df, x="Period ending", y=df.columns[5:],
                  labels={"index": "Period ending (date)", "value": "Amount of journeys (millions)",
                          "variable": "Journey types:"})
 
+pie_df = df[
+    ['Bus journeys (m)', 'Underground journeys (m)', 'DLR journeys (m)', 'Tram journeys (m)', 'Overground journeys (m)',
+     'Emirates Airline journeys (m)', 'TfL Rail journeys (m)']].sum()
+
+pie_fig = px.pie(values=pie_df.values, names=pie_df.index, title="Amount of journeys in a year")
+
 line_graph_tab = html.Div(children=[])
 
 app.layout = html.Div(children=[
@@ -51,13 +57,13 @@ app.layout = html.Div(children=[
 
     html.Div(
         [html.H4('Choose a journey type from the dropdown list:'),
-        dcc.Dropdown(
-            id="journey-types-dropdown",
-            options=[{
-                'label': i,
-                'value': i
-            } for i in types], placeholder='Select a journey type...'),
-        ],
+         dcc.Dropdown(
+             id="journey-types-dropdown",
+             options=[{
+                 'label': i,
+                 'value': i
+             } for i in types], placeholder='Select a journey type...'),
+         ],
         style={'width': '30%',
                'display': 'inline'}),
 
@@ -69,8 +75,14 @@ app.layout = html.Div(children=[
     dcc.Graph(
         id='bar-graph',
         figure=bar_fig
+    ),
+
+    dcc.Graph(
+        id='pie-graph',
+        figure=pie_fig
     )
 ])
+
 
 # Callback for line graph
 @app.callback(
