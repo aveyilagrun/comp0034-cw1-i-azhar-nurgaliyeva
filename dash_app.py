@@ -16,7 +16,6 @@ types = journey_types.columns
 
 df['Period ending'] = pd.to_datetime(df['Period ending'])
 
-
 line_fig = px.line(df, x="Period ending", y=df.columns[5:], markers=True,
                    title="Usage of public transport by journey types in London", width=1200, height=500,
                    labels={"Period ending": "Period ending (date)", "value": "Amount of journeys (millions)",
@@ -61,11 +60,11 @@ app.layout = html.Div(children=[
 
     html.Div(
         dcc.Dropdown(
-             id="journey-types-dropdown",
-             options=[{
-                 'label': i,
-                 'value': i
-             } for i in types], placeholder='Select a journey type...'),
+            id="journey-types-dropdown",
+            options=[{
+                'label': i,
+                'value': i
+            } for i in types], placeholder='Select a journey type...'),
         style={'width': '40%',
                'display': 'inline-block'}),
 
@@ -85,16 +84,16 @@ app.layout = html.Div(children=[
     )),
 
     html.Div(dcc.RangeSlider(
-        2018,
-        2021,
+        18,
+        21,
         step=1,
         id='timeline-slider',
-        value=[2019, 2020],
+        value=[18, 21],
         marks={
-            2018: '2018',
-            2019: '2019',
-            2020: '2020',
-            2021: '2021'}
+            18: '2018',
+            19: '2019',
+            20: '2020',
+            21: '2021'}
     ), style={'width': '50%', 'display': 'middle'})
 
 ])
@@ -105,20 +104,39 @@ app.layout = html.Div(children=[
     Output(component_id='line-graph', component_property='figure'),
     Input(component_id='journey-types-dropdown', component_property='value'))
 def update_line_graph(selected_type):
-    filtered_journeys = df[['Period ending', f'{selected_type}']]
-    line_fig = px.line(filtered_journeys, x='Period ending', y=f'{selected_type}',
-                       title=f'Usage of {selected_type} in London')
-    return line_fig
+    if selected_type != None:
+        filtered_journeys = df[['Period ending', f'{selected_type}']]
+        line_fig_new = px.line(filtered_journeys, x='Period ending', y=f'{selected_type}',
+                               title=f'Usage of {selected_type} in London')
+    else:
+        line_fig_new = line_fig
+    return line_fig_new
 
 
 # Callback for pie graph
 @app.callback(
     Output(component_id='pie-graph', component_property='figure'),
     Input(component_id='timeline-slider', component_property='value'))
-def update_pie_graph(selected_type):
-    filtered_timeline = ...
-    pie_fig = ...
-    return pie_fig
+def update_pie_graph(selected_year):
+    filtered_timeline = pd.DataFrame()
+    if int(selected_year[1]) - int(selected_year[0]) == 1:
+        for i in selected_year:
+            filtered_timeline = filtered_timeline.append(df[df['Period ending'].astype(str).str.contains(f'{i}') == True])
+    elif int(selected_year[1]) - int(selected_year[0]) == 2:
+        selected_year.append(int(selected_year[1]) - 1)
+        for i in selected_year:
+            filtered_timeline = filtered_timeline.append(df[df['Period ending'].astype(str).str.contains(f'{i}') == True])
+    elif int(selected_year[1]) - int(selected_year[0]) == 3:
+        selected_year.append(int(selected_year[1]) - 1)
+        selected_year.append(int(selected_year[1]) - 2)
+        for i in selected_year:
+            filtered_timeline = filtered_timeline.append(df[df['Period ending'].astype(str).str.contains(f'{i}') == True])
+    elif int(selected_year[1]) == int(selected_year[0]):
+        filtered_timeline = filtered_timeline.append(df[df['Period ending'].astype(str).str.contains(f'{selected_year[0]}') == True])
+    pie_df_new = filtered_timeline[['Bus journeys (m)', 'Underground journeys (m)', 'DLR journeys (m)', 'Tram journeys (m)', 'Overground journeys (m)','Emirates Airline journeys (m)', 'TfL Rail journeys (m)']].sum()
+    pie_fig_new = px.pie(values=pie_df_new.values, names=pie_df_new.index,
+                         title="Amount of journeys in a year")
+    return pie_fig_new
 
 
 if __name__ == '__main__':
