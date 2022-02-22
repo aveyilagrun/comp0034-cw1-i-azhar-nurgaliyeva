@@ -54,9 +54,11 @@ app.layout = html.Div(children=[
                        and so on. In 2020 and 2021, there were a lot of disruptions of Transport for London (TfL) 
                        because of coronavirus pandemic. New regulations and changes led to the transition of popularity 
                        for public transport journeys by type of transport. Due to an increased demand for transport, 
-                       there is now a problem of overcrowding, which is a safety risk.''')]),
+                       there is now a problem of overcrowding, which is a safety risk.''')],
+             style={'margin-left': '80px', 'margin-right': "25px", 'margin-top': "30px"}),
 
-    html.Div(html.H4('Choose a journey type from the dropdown list:')),
+    html.Div(html.H4('Choose a journey type from the dropdown list:'),
+             style={'margin-left': '80px', 'margin-right': "25px", 'margin-top': "30px"}),
 
     html.Div(
         dcc.Dropdown(
@@ -66,22 +68,26 @@ app.layout = html.Div(children=[
                 'value': i
             } for i in types], placeholder='Select a journey type...'),
         style={'width': '40%',
-               'display': 'inline-block'}),
+               'display': 'inline-block', 'margin-left': '80px', 'margin-right': "25px", 'margin-top': "30px",
+               'textAlign': 'center'}),
 
     html.Div(dcc.Graph(
         id='line-graph',
         figure=line_fig
-    )),
+    ), style={'margin-left': '30px', 'margin-right': "30px", 'margin-top': "30px"}),
 
     html.Div(dcc.Graph(
         id='bar-graph',
         figure=bar_fig
-    )),
+    ), style={'margin-left': '30px', 'margin-right': "30px", 'margin-top': "30px"}),
 
     html.Div(dcc.Graph(
         id='pie-graph',
         figure=pie_fig
-    )),
+    ), style={'margin-left': '30px', 'margin-right': "30px", 'margin-top': "30px"}),
+
+    html.Div(html.H4('Choose a timeline to compare popularity in journey types:'),
+             style={'margin-left': '80px', 'margin-right': "25px", 'margin-top': "30px"}),
 
     html.Div(dcc.RangeSlider(
         18,
@@ -94,7 +100,7 @@ app.layout = html.Div(children=[
             19: '2019',
             20: '2020',
             21: '2021'}
-    ), style={'width': '50%', 'display': 'middle'})
+    ), style={'width': '50%', 'display': 'inline-block', 'margin-left': '80px', 'margin-right': "25px", 'margin-top': "30px"})
 
 ])
 
@@ -121,19 +127,25 @@ def update_pie_graph(selected_year):
     filtered_timeline = pd.DataFrame()
     if int(selected_year[1]) - int(selected_year[0]) == 1:
         for i in selected_year:
-            filtered_timeline = filtered_timeline.append(df[df['Period ending'].astype(str).str.contains(f'{i}') == True])
+            filtered_timeline = filtered_timeline.append(
+                df[df['Period ending'].astype(str).str.contains(f'{i}') == True])
     elif int(selected_year[1]) - int(selected_year[0]) == 2:
         selected_year.append(int(selected_year[1]) - 1)
         for i in selected_year:
-            filtered_timeline = filtered_timeline.append(df[df['Period ending'].astype(str).str.contains(f'{i}') == True])
+            filtered_timeline = filtered_timeline.append(
+                df[df['Period ending'].astype(str).str.contains(f'{i}') == True])
     elif int(selected_year[1]) - int(selected_year[0]) == 3:
         selected_year.append(int(selected_year[1]) - 1)
         selected_year.append(int(selected_year[1]) - 2)
         for i in selected_year:
-            filtered_timeline = filtered_timeline.append(df[df['Period ending'].astype(str).str.contains(f'{i}') == True])
+            filtered_timeline = filtered_timeline.append(
+                df[df['Period ending'].astype(str).str.contains(f'{i}') == True])
     elif int(selected_year[1]) == int(selected_year[0]):
-        filtered_timeline = filtered_timeline.append(df[df['Period ending'].astype(str).str.contains(f'{selected_year[0]}') == True])
-    pie_df_new = filtered_timeline[['Bus journeys (m)', 'Underground journeys (m)', 'DLR journeys (m)', 'Tram journeys (m)', 'Overground journeys (m)','Emirates Airline journeys (m)', 'TfL Rail journeys (m)']].sum()
+        filtered_timeline = filtered_timeline.append(
+            df[df['Period ending'].astype(str).str.contains(f'{selected_year[0]}') == True])
+    pie_df_new = filtered_timeline[
+        ['Bus journeys (m)', 'Underground journeys (m)', 'DLR journeys (m)', 'Tram journeys (m)',
+         'Overground journeys (m)', 'Emirates Airline journeys (m)', 'TfL Rail journeys (m)']].sum()
     pie_fig_new = px.pie(values=pie_df_new.values, names=pie_df_new.index,
                          title="Amount of journeys in a year")
     return pie_fig_new
