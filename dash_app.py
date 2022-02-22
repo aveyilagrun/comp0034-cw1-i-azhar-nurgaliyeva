@@ -2,9 +2,8 @@ import dash
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
-from dash import dcc
-from dash import html
-from dash import Input, Output
+from dash import dcc, html, Input, Output
+from datetime import datetime
 
 external_stylesheets = [dbc.themes.PULSE]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -14,6 +13,9 @@ df = pd.read_csv('prepared_dataset.csv')
 
 journey_types = df.iloc[:, 5:]
 types = journey_types.columns
+
+df['Period ending'] = pd.to_datetime(df['Period ending'])
+
 
 line_fig = px.line(df, x="Period ending", y=df.columns[5:], markers=True,
                    title="Usage of public transport by journey types in London", width=1200, height=500,
@@ -31,7 +33,7 @@ pie_df = df[
 
 pie_fig = px.pie(values=pie_df.values, names=pie_df.index, title="Amount of journeys in a year")
 
-line_graph_tab = html.Div(children=[])
+# Graph to compare same periods from different financial years?
 
 app.layout = html.Div(children=[
 
@@ -55,32 +57,46 @@ app.layout = html.Div(children=[
                        for public transport journeys by type of transport. Due to an increased demand for transport, 
                        there is now a problem of overcrowding, which is a safety risk.''')]),
 
+    html.Div(html.H4('Choose a journey type from the dropdown list:')),
+
     html.Div(
-        [html.H4('Choose a journey type from the dropdown list:'),
-         dcc.Dropdown(
+        dcc.Dropdown(
              id="journey-types-dropdown",
              options=[{
                  'label': i,
                  'value': i
              } for i in types], placeholder='Select a journey type...'),
-         ],
-        style={'width': '30%',
-               'display': 'inline'}),
+        style={'width': '40%',
+               'display': 'inline-block'}),
 
-    dcc.Graph(
+    html.Div(dcc.Graph(
         id='line-graph',
         figure=line_fig
-    ),
+    )),
 
-    dcc.Graph(
+    html.Div(dcc.Graph(
         id='bar-graph',
         figure=bar_fig
-    ),
+    )),
 
-    dcc.Graph(
+    html.Div(dcc.Graph(
         id='pie-graph',
         figure=pie_fig
-    )
+    )),
+
+    html.Div(dcc.RangeSlider(
+        2018,
+        2021,
+        step=1,
+        id='timeline-slider',
+        value=[2019, 2020],
+        marks={
+            2018: '2018',
+            2019: '2019',
+            2020: '2020',
+            2021: '2021'}
+    ), style={'width': '50%', 'display': 'middle'})
+
 ])
 
 
@@ -88,11 +104,21 @@ app.layout = html.Div(children=[
 @app.callback(
     Output(component_id='line-graph', component_property='figure'),
     Input(component_id='journey-types-dropdown', component_property='value'))
-def update_graph(selected_type):
+def update_line_graph(selected_type):
     filtered_journeys = df[['Period ending', f'{selected_type}']]
     line_fig = px.line(filtered_journeys, x='Period ending', y=f'{selected_type}',
                        title=f'Usage of {selected_type} in London')
     return line_fig
+
+
+# Callback for pie graph
+@app.callback(
+    Output(component_id='pie-graph', component_property='figure'),
+    Input(component_id='timeline-slider', component_property='value'))
+def update_pie_graph(selected_type):
+    filtered_timeline = ...
+    pie_fig = ...
+    return pie_fig
 
 
 if __name__ == '__main__':
