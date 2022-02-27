@@ -50,7 +50,7 @@ year_fig.update_layout(height=500, width=1200,
 box_fig = px.box(df, y=df.columns[5:])
 
 line_graph_tab = html.Div([
-    html.H4('Choose a journey type from the dropdown list:'),
+    html.H4('Choose a journey type from the list:'),
     dcc.Dropdown(
         id="journey-types-dropdown",
         options=[{
@@ -63,8 +63,8 @@ line_graph_tab = html.Div([
         figure=line_fig
     ),
 ],
-    style={'width': '40%', 'display': 'inline-block', 'margin-left': '80px',
-           'margin-right': "25px", 'margin-top': "30px", 'textAlign': 'center'})
+    style={'width': '40%', 'display': 'inline-block', 'margin-left': '30px',
+           'margin-right': "30px", 'margin-top': "10px", 'textAlign': 'center'})
 
 bar_graph_tab = html.Div([
     dcc.Graph(
@@ -72,8 +72,8 @@ bar_graph_tab = html.Div([
         figure=bar_fig
     )
 ],
-    style={'width': '40%', 'display': 'inline-block', 'margin-left': '80px',
-           'margin-right': "25px", 'margin-top': "30px", 'textAlign': 'center'})
+    style={'width': '40%', 'display': 'inline-block', 'margin-left': '30px', 'margin-right': "30px",
+           'margin-top': "10px"})
 
 pie_chart_tab = html.Div([
     dcc.Graph(
@@ -96,15 +96,15 @@ pie_chart_tab = html.Div([
             21: '2021'}
     ),
 ],
-    style={'width': '40%', 'display': 'inline-block', 'margin-left': '80px',
-           'margin-right': "25px", 'margin-top': "30px", 'textAlign': 'center'})
+    style={'display': 'inline-block', 'margin-left': '80px',
+           'margin-right': "20px", 'margin-top': "10px"})
 
 subplots_tab = html.Div([
     dcc.Graph(
         id='time-graph',
         figure=year_fig
     )
-], style={'margin-left': '30px', 'margin-right': "30px", 'margin-top': "30px"})
+], style={'margin-left': '30px', 'margin-right': "30px", 'margin-top': "10px"})
 
 box_plots_tab = html.Div([
     html.H4('Choose journey types to compare box plots:'),
@@ -114,15 +114,15 @@ box_plots_tab = html.Div([
         options=[{'value': x, 'label': x}
                  for x in df.columns[5:]],
         value='Bus journeys (m)',
-        labelStyle={'display': 'inline-block', 'margin-left': '80px', 'margin-right': "25px",
-                    'margin-top': "30px"}
+        labelStyle={'display': 'inline-block', 'margin-left': '30px', 'margin-right': "30px",
+                    'margin-top': "10px"}
     ),
 
     dcc.Graph(
         id='box-graph',
         figure=box_fig
     ),
-], style={'margin-left': '30px', 'margin-right': "30px", 'margin-top': "30px"})
+], style={'margin-left': '30px', 'margin-right': "30px", 'margin-top': "10px"})
 
 app.layout = html.Div([
     dbc.NavbarSimple(
@@ -135,7 +135,14 @@ app.layout = html.Div([
         brand_href="#",
         color="primary",
         dark=True,
+        style={'height': '50px'}
     ),
+
+    html.Div([html.Div('''There are many types of public transportation in London. In 2020, 
+              there were a lot of disruptions of Transport for London (TfL) because of coronavirus pandemic. 
+              New regulations and changes led to the transition of popularity for public transport journeys 
+              by type of transport. The following visualisations are used to analyse the trends:''')],
+             style={'margin-left': '30px', 'margin-right': "30px", 'margin-top': "10px"}),
 
     dcc.Tabs(id="tabs", value='tab-1', children=[
         dcc.Tab(label='Line graph', value='tab-1'),
@@ -144,16 +151,7 @@ app.layout = html.Div([
         dcc.Tab(label='Subplots', value='tab-4'),
         dcc.Tab(label='Box plots', value='tab-5')],
              style={'textAlign': 'center',
-                    'border': '2px solid blue'}), html.Div(id='tabs-content'),
-
-    html.Div([html.H4('Description of the data'),
-              html.Div('''There are many types of public transportation in London. Trends in the usage of
-                       public transport change due to the certain events such as road closures, construction works
-                       and so on. In 2020 and 2021, there were a lot of disruptions of Transport for London (TfL)
-                       because of coronavirus pandemic. New regulations and changes led to the transition of popularity
-                       for public transport journeys by type of transport. Due to an increased demand for transport,
-                       there is now a problem of overcrowding, which is a safety risk.''')],
-             style={'margin-left': '80px', 'margin-right': "25px", 'margin-top': "30px"}),
+                    'border': '2px solid indigo', 'margin-top': "10px"}), html.Div(id='tabs-content')
 
 ])
 
