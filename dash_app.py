@@ -33,24 +33,24 @@ pie_df = df[
 
 pie_fig = px.pie(values=pie_df.values, names=pie_df.index, title="Amount of journeys in a year")
 
-year_fig = make_subplots(rows=2, cols=2,
+sub_fig = make_subplots(rows=2, cols=2,
                          subplot_titles=("Overground journeys", "DLR journeys", "Tram journeys", "TfL Rail journeys"))
 
-year_fig.add_trace(go.Scatter(x=df['Period ending'], y=df['Overground journeys (m)'] * 1000000), row=1, col=1)
+sub_fig.add_trace(go.Scatter(x=df['Period ending'], y=df['Overground journeys (m)'] * 1000000), row=1, col=1)
 
-year_fig.add_trace(go.Scatter(x=df['Period ending'], y=df['DLR journeys (m)'] * 1000000), row=1, col=2)
+sub_fig.add_trace(go.Scatter(x=df['Period ending'], y=df['DLR journeys (m)'] * 1000000), row=1, col=2)
 
-year_fig.add_trace(go.Scatter(x=df['Period ending'], y=df['Tram journeys (m)'] * 1000000), row=2, col=1)
+sub_fig.add_trace(go.Scatter(x=df['Period ending'], y=df['Tram journeys (m)'] * 1000000), row=2, col=1)
 
-year_fig.add_trace(go.Scatter(x=df['Period ending'], y=df['TfL Rail journeys (m)'] * 1000000), row=2, col=2)
+sub_fig.add_trace(go.Scatter(x=df['Period ending'], y=df['TfL Rail journeys (m)'] * 1000000), row=2, col=2)
 
-year_fig.update_layout(height=500, width=1200,
+sub_fig.update_layout(height=500, width=1200,
                        title_text="Usage of overground, DLR, tram and TfL rail journey types in London")
 
 box_fig = px.box(df, y=df.columns[5:])
 
 line_graph_tab = html.Div([
-    html.H4('Choose a journey type from the list:'),
+    html.H5('Choose a journey type from the list:'),
     dcc.Dropdown(
         id="journey-types-dropdown",
         options=[{
@@ -81,7 +81,7 @@ pie_chart_tab = html.Div([
         figure=pie_fig
     ),
 
-    html.H4('Choose a timeline to compare popularity in journey types:'),
+    html.H5('Choose a timeline to compare popularity in journey types:'),
 
     dcc.RangeSlider(
         18,
@@ -100,14 +100,16 @@ pie_chart_tab = html.Div([
            'margin-right': "20px", 'margin-top': "10px"})
 
 subplots_tab = html.Div([
+    html.H4('Subplots of Overground, Tram, DLR and TfL Rail journey types'),
     dcc.Graph(
         id='time-graph',
-        figure=year_fig
+        figure=sub_fig
     )
 ], style={'margin-left': '30px', 'margin-right': "30px", 'margin-top': "10px"})
 
 box_plots_tab = html.Div([
-    html.H4('Choose journey types to compare box plots:'),
+    html.H4('Box plots of amount of journeys'),
+    html.H5('Choose journey types to compare box plots:'),
 
     dcc.RadioItems(
         id='y-axis',
